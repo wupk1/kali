@@ -1,0 +1,68 @@
+# 安装
+curl -fsSL https://molt.bot/install.sh | bash
+
+# 启动
+clawdbot gateway
+
+# 停止
+clawdbot gateway stop 
+
+# 使用whatsapp登陆
+clawdbot channels login --channel whatsapp
+
+# 检查WhatsApp是否连通
+curl -I https://web.whatsapp.com/
+
+# 选择模型
+clawdbot configure --section model  
+
+# 1) 设置 MiniMax Anthropic-compatible Base URL（官方推荐）
+clawdbot config set models.providers.minimax.baseUrl "https://api.minimaxi.com/anthropic"
+
+clawdbot config set models.providers.minimax.baseUrl "https://api.minimax.io/anthropic"
+
+# 2) 设置 MiniMax API Key（对应 MINIMAX_API_KEY）
+clawdbot config set models.providers.minimax.apiKey "你的MINIMAX_API_KEY"
+
+# 3)（建议）明确走 Anthropic Messages 兼容协议
+clawdbot config set models.providers.minimax.api "anthropic-messages"
+
+🔥用指令建立「每天9 點」的Cron Job Permalink
+Copy codeclawdbot cron add \
+  --name "Daily 9am AI Briefing" \
+  --cron "0 9 * * *" \
+  --tz "America/Denver" \
+  --session isolated \
+  --message "Create a Chinese AI briefing for the last 24 hours (AI/LLM/Agents/Coding tools). Steps: (1) Browse and collect 8–12 notable updates from English sources; (2) For each item include: what happened, why it matters, and the original source link; (3) Rank by \"heat\" (signals: multiple sources, official announcements, GitHub stars/issues, wide discussion); (4) Output: Top 5 (detailed) + Next 5 (one-liners) + 3 follow-up angles for a YouTube video. Keep it concise and skimmable, with bullet points and links." \
+  --deliver \
+  --channel last
+  
+  # 立刻手动跑一次验证
+ clawdbot cron run 375e68be-006d-46a9-8129-275defa1b4ba --force
+🔥blogwatcher使用方式Permalink
+Copy code# 添加订阅源（只需执行一次）
+blogwatcher add "GH: Claude Code releases" https://github.com/anthropics/claude-code/releases.atom
+blogwatcher add "GH: Clawdbot releases" https://github.com/clawdbot/clawdbot/releases.atom
+blogwatcher add "AI: aivi.fyi" https://www.aivi.fyi/feed
+
+# 扫描并查看新增
+blogwatcher scan
+blogwatcher articles
+
+# 创建每天 9 点推送到 WhatsApp 的 Cron
+clawdbot cron add \
+  --name "Daily 9am AI Briefing (blogwatcher -> WhatsApp)" \
+  --cron "0 9 * * *" \
+  --tz "America/Denver" \
+  --session isolated \
+  --message "Use the blogwatcher tool to: (1) scan feeds; (2) list unread/new articles; (3) keep only AI/LLM/Agents/Coding tools related; (4) for each item output ONE Chinese sentence + the original link; (5) rank by heat (official announcements, GitHub momentum, wide discussion). Output: Top 5 (detailed) + Next 5 (one-liners) + 3 YouTube angles. Then mark summarized items as read using blogwatcher read-all. Keep total under 1200 Chinese characters; bullet points only; no preamble." \
+  --deliver \
+  --channel whatsapp \
+  --to "+18186751473"
+
+# 运行后会输出一个 JSON，其中有 "id": "..."（记下这个 id）
+# 立刻强制跑一次测试（把 <ID> 替换成上一步输出的 id）
+clawdbot cron run <ID> --force
+
+# 查看最近运行记录
+clawdbot cron runs --id <ID> --limit 10

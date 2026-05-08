@@ -1,0 +1,38 @@
+ai內建功能作業 啟動 clawdbot --help
+
+🔹 Step 1：修正主目錄權限
+icacls "C:\Users\danie\.clawdbot" /inheritance:r /grant:r danie:(OI)(CI)F
+
+
+- 移除繼承權限，僅允許使用者 danie 完全控制。
+
+🔹 Step 2：修正設定檔
+icacls "C:\Users\danie\.clawdbot\clawdbot.json" /inheritance:r /grant:r danie:F
+
+
+- 只允許 danie 修改設定檔。
+
+🔹 Step 3：修正憑證目錄
+icacls "C:\Users\danie\.clawdbot\credentials" /inheritance:r /grant:r danie:(OI)(CI)F
+
+
+- 確保憑證檔案只有你能存取。
+
+🔹 Step 4：修正 auth-profiles.json
+icacls "C:\Users\danie\.clawdbot\agents\main\agent\auth-profiles.json" /inheritance:r /grant:r danie:F
+
+
+- 防止其他人注入假憑證。
+
+🔹 Step 5：修正 sessions.json
+icacls "C:\Users\danie\.clawdbot\agents\main\sessions\sessions.json" /inheritance:r /grant:r danie:F
+
+
+- 保護會話紀錄不被其他人讀取。
+
+🔹 Step 6：重新檢查
+執行：
+clawdbot security audit
+
+
+確認 critical 與 warn 已經消失。
